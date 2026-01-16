@@ -372,9 +372,14 @@ fetch(URL_SCRIPT_GOOGLE, { method: 'POST', body: fd, mode: 'no-cors' })
 .then(() => {
 
 const btn = document.getElementById('btn-email-submit');
-btn.innerHTML = "ORDEN REGISTRADA ✔";
-btn.disabled = true;
-btn.style.opacity = "0.6";
+btn.innerHTML = "ORDEN REGISTRADA ✔ (toca para cerrar)";
+btn.disabled = false;
+btn.style.opacity = "0.8";
+
+btn.onclick = () => {
+  closeCartModal();
+};
+
 
 const msg = document.getElementById("yk-confirmation-msg");
 msg.innerHTML = `
