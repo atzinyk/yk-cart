@@ -7,7 +7,7 @@ var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQc
 let YK_REGION = localStorage.getItem('yk_region') || 'mx';
 
 const USD_RATE = 20;
-const PAYPAL_FEE = 1.043;
+const PAYPAL_FEE = 1.045;
 
 function convertToUSD(mxn) {
   return ((mxn / USD_RATE) * PAYPAL_FEE);
@@ -28,6 +28,15 @@ function setRegion(region) {
 
   document.getElementById('yk-region-warning').style.display =
     region === 'int' ? 'block' : 'none';
+
+  // 🔽 LIMPIEZA AL CAMBIAR DE REGIÓN (PASO 5)
+  document
+    .querySelectorAll('input[name="yk-shipping"]')
+    .forEach(r => r.checked = false);
+
+  document.getElementById('sub-envio').style.display = 'none';
+  document.getElementById('sub-entrega').style.display = 'none';
+  // 🔼 FIN DE LIMPIEZA
 
   renderCartList();
 }
@@ -283,7 +292,6 @@ tabEntrega.style.background = 'rgba(255,255,255,0.05)';
 tabEntrega.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEntrega.style.color = '#fff';
 
-document.getElementById('env-p').checked = true;
 toggleCampos(true);
 
 } else {
@@ -296,7 +304,6 @@ tabEnvio.style.background = 'rgba(255,255,255,0.05)';
 tabEnvio.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEnvio.style.color = '#fff';
 
-document.getElementById('env-m').checked = true;
 toggleCampos(false);
 
 }
@@ -495,15 +502,15 @@ function applyInternationalForm() {
     </div>
   `;
 }
-function goStep(step) {
-  document.getElementById('yk-step-1').style.display =
-    step === 1 ? 'block' : 'none';
-
-  document.getElementById('yk-order-form').style.display =
-    step === 2 ? 'block' : 'none';
-}
-
 function validateStep1() {
+
+  // INTERNACIONAL: no necesita método de envío
+  if (YK_REGION === 'int') {
+    goStep(2);
+    return;
+  }
+
+  // MÉXICO: sí debe elegir
   const selected = document.querySelector('input[name="yk-shipping"]:checked');
 
   if (!selected) {
