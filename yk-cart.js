@@ -82,7 +82,11 @@ if(p) { sub += p.price * yk_cart[id]; count += yk_cart[id]; }
 
 const btn = document.getElementById('yk-cart-btn-flotante');
 
-if(btn) btn.innerText = `🛒 (${count}) $${sub.toFixed(2)} MXN`;
+let displayTotal = YK_REGION === 'int'
+  ? convertToUSD(sub)
+  : sub;
+
+if (btn) btn.innerText = `🛒 (${count}) ${formatPrice(displayTotal)}`;
 
 }
 
@@ -193,7 +197,8 @@ if (YK_REGION === 'mx') {
   goalContainer.style.display = 'none';
 
 }
-
+  
+const esGratis = YK_REGION === 'mx' && sub >= GOAL_SHIPPING;
 const envs = { p: 180, c: 80, m: 30, e: 0 };
 
 Object.keys(envs).forEach(k => {
@@ -278,15 +283,14 @@ document.getElementById('yk-modal-checkout').classList.add('visible');
 
 loadDraft();
 
-renderCartList();
-
-applyInternationalForm();
-
-goStep(1);
-
-// 🔽 AQUÍ EMPIEZA LO NUEVO (reset visual)
+if (YK_REGION === 'mx') {
   document.getElementById('sub-envio').style.display = 'none';
   document.getElementById('sub-entrega').style.display = 'none';
+
+  document
+    .querySelectorAll('input[name="yk-shipping"]')
+    .forEach(r => r.checked = false);
+}
 
   document
     .querySelectorAll('input[name="yk-shipping"]')
@@ -401,7 +405,9 @@ document.getElementById('yk-notas').value = d.nt || "";
 function enviarPedido() {
 
 if (YK_REGION === 'int') {
-  alert("Próximamente pagos internacionales vía PayPal ✨");
+  const env = document.getElementById('env-i');
+  if (env) env.checked = true;
+  goStep(2);
   return;
 }
 
