@@ -1,5 +1,37 @@
 var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQctzkWsZ7yGdZjDDLcF2FmtbxVBqOOE-DH4iVlVka4mNAa8uX1MC-J/exec";
 
+// =========================
+// REGIÓN Y MONEDA
+// =========================
+
+let YK_REGION = localStorage.getItem('yk_region') || 'mx';
+
+const USD_RATE = 20;
+const PAYPAL_FEE = 1.043;
+
+function convertToUSD(mxn) {
+  return ((mxn / USD_RATE) * PAYPAL_FEE);
+}
+
+function formatPrice(value) {
+  return YK_REGION === 'mx'
+    ? `$${value.toFixed(2)} MXN`
+    : `$${value.toFixed(2)} USD`;
+}
+
+function setRegion(region) {
+  YK_REGION = region;
+  localStorage.setItem('yk_region', region);
+
+  document.getElementById('yk-btn-mx').style.opacity = region === 'mx' ? '1' : '0.6';
+  document.getElementById('yk-btn-int').style.opacity = region === 'int' ? '1' : '0.6';
+
+  document.getElementById('yk-region-warning').style.display =
+    region === 'int' ? 'block' : 'none';
+
+  renderCartList();
+}
+
 
 var yk_cart = JSON.parse(localStorage.getItem('ykshopCart')) || {};
 
@@ -33,7 +65,9 @@ function renderCartList() {
 
 const list = document.getElementById('yk-cart-summary');
 
-list.innerHTML = ""; let sub = 0;
+list.innerHTML = "";
+let sub = 0;
+let subFinal = 0;
 
 Object.keys(yk_cart).forEach(id => {
 
@@ -88,10 +122,18 @@ $${itemTotal.toFixed(2)}
 }
 
 });
+ 
+if (YK_REGION === 'int') {
+  subFinal = convertToUSD(sub);
+} else {
+  subFinal = sub;
+}
 
-document.getElementById('yk-cart-subtotal').innerText = `Subtotal: $${sub.toFixed(2)} MXN`;
+document.getElementById('yk-cart-subtotal').innerText =
+  `Subtotal: ${formatPrice(subFinal)}`;
 
-const esGratis = sub >= GOAL_SHIPPING;
+const esGratis = (YK_REGION === 'mx') && sub >= GOAL_SHIPPING;
+
 
 const goalText = document.getElementById('yk-goal-text');
 
@@ -194,6 +236,8 @@ document.getElementById('yk-modal-checkout').classList.add('visible');
 loadDraft();
 
 renderCartList();
+
+applyInternationalForm();
 
 }
 
@@ -303,6 +347,11 @@ document.getElementById('yk-notas').value = d.nt || "";
 }
 
 function enviarPedido() {
+
+if (YK_REGION === 'int') {
+  alert("Próximamente pagos internacionales vía PayPal ✨");
+  return;
+}
 
 const n = document.getElementById('yk-nombre').value;
 
@@ -414,3 +463,31 @@ if(window.yk_products) { updateCartUI(); clearInterval(checkLoad); }
 }, 500);
 
 window.onload = updateCartUI;
+
+function goStep(step) {
+  document.getElementById('yk-cart-summary').style.display =
+    step === 1 ? 'block' : 'none';
+
+  document.getElementById('yk-order-form').style.display =
+    step === 2 ? 'block' : 'none';
+}
+function applyInternationalForm() {
+  if (YK_REGION !== 'int') return;
+
+  document.getElementById('yk-address-section').innerHTML = `
+    <div class="yk-form-group">
+      <label>Nombre Completo</label>
+      <input placeholder="Tal cual aparece en su identificación oficial">
+    </div>
+
+    <div class="yk-form-group">
+      <label>País</label>
+      <input>
+    </div>
+
+    <div class="yk-form-group">
+      <label>Código Postal</label>
+      <input>
+    </div>
+  `;
+}
