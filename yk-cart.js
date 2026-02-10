@@ -239,6 +239,8 @@ renderCartList();
 
 applyInternationalForm();
 
+goStep(1);
+
 }
 
 function closeCartModal() { document.getElementById('yk-modal-checkout').classList.remove('visible'); }
@@ -464,13 +466,6 @@ if(window.yk_products) { updateCartUI(); clearInterval(checkLoad); }
 
 window.onload = updateCartUI;
 
-function goStep(step) {
-  document.getElementById('yk-cart-summary').style.display =
-    step === 1 ? 'block' : 'none';
-
-  document.getElementById('yk-order-form').style.display =
-    step === 2 ? 'block' : 'none';
-}
 function applyInternationalForm() {
   if (YK_REGION !== 'int') return;
 
@@ -491,3 +486,11 @@ function applyInternationalForm() {
     </div>
   `;
 }
+function goStep(step) {
+  document.getElementById('yk-step-1').style.display =
+    step === 1 ? 'block' : 'none';
+
+  document.getElementById('yk-order-form').style.display =
+    step === 2 ? 'block' : 'none';
+}
+
