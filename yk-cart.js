@@ -39,6 +39,22 @@ function setRegion(region) {
   // 🔼 FIN DE LIMPIEZA
 
   renderCartList();
+
+  // 🌍 AJUSTES VISUALES POR REGIÓN
+  if (region === 'int') {
+    document.getElementById('tab-entrega').style.display = 'none';
+
+    const envInt = document.getElementById('env-int');
+    if (envInt) envInt.style.display = 'block';
+
+    document.getElementById('sub-envio').style.display = 'block';
+
+  } else {
+    document.getElementById('tab-entrega').style.display = 'flex';
+
+    const envInt = document.getElementById('env-int');
+    if (envInt) envInt.style.display = 'none';
+  }
 }
 
 
@@ -84,9 +100,13 @@ let p = getProduct(id);
 
 if(p) {
 
-let itemTotal = p.price * yk_cart[id];
+let baseTotal = p.price * yk_cart[id];
 
-sub += itemTotal;
+let itemTotal = YK_REGION === 'int'
+  ? convertToUSD(baseTotal)
+  : baseTotal;
+
+sub += baseTotal;
 
 list.innerHTML += `
 <li style="
@@ -123,7 +143,7 @@ ${p.name}
 </div>
 
 <span style="min-width:80px; text-align:right;">
-$${itemTotal.toFixed(2)}
+${formatPrice(itemTotal)}
 </span>
 
 </li>`;
@@ -141,28 +161,36 @@ if (YK_REGION === 'int') {
 document.getElementById('yk-cart-subtotal').innerText =
   `Subtotal: ${formatPrice(subFinal)}`;
 
-const esGratis = (YK_REGION === 'mx') && sub >= GOAL_SHIPPING;
-
-
 const goalText = document.getElementById('yk-goal-text');
-
 const goalBar = document.getElementById('yk-goal-bar');
+const goalContainer = document.querySelector('.yk-shipping-goal-container');
 
-if (esGratis) {
+if (YK_REGION === 'mx') {
 
-goalText.innerHTML = "✨ ¡Felicidades! Tienes <strong>Envío Gratis</strong> ✨";
+  // 👇 TODO este bloque solo vive en México
+  goalContainer.style.display = 'block';
 
-goalBar.style.width = "100%";
+  if (sub >= GOAL_SHIPPING) {
+
+    goalText.innerHTML =
+      "✨ ¡Felicidades! Tienes <strong>Envío Gratis</strong> ✨";
+    goalBar.style.width = "100%";
+
+  } else {
+
+    let faltante = GOAL_SHIPPING - sub;
+    let porcentaje = (sub / GOAL_SHIPPING) * 100;
+
+    goalText.innerHTML =
+      `Agrega <strong>$${faltante.toFixed(2)}</strong> más y no pagues envío. 🚚`;
+    goalBar.style.width = `${porcentaje}%`;
+
+  }
 
 } else {
 
-let faltante = GOAL_SHIPPING - sub;
-
-let porcentaje = (sub / GOAL_SHIPPING) * 100;
-
-goalText.innerHTML = `Agrega <strong>$${faltante.toFixed(2)}</strong> más y no pagues envío. 🚚`;
-
-goalBar.style.width = `${porcentaje}%`;
+  // 🌍 Internacional: NO hay metas de envío
+  goalContainer.style.display = 'none';
 
 }
 
@@ -190,9 +218,15 @@ el.innerHTML = `<strong>Costo: $${envs[k].toFixed(2)} MXN</strong>`;
 
 const envSel = document.querySelector('input[name="yk-shipping"]:checked');
 
-const total = sub + (esGratis ? 0 : (envSel ? parseFloat(envSel.value) : 0));
+let totalBase = sub + (esGratis ? 0 : (envSel ? parseFloat(envSel.value) : 0));
 
-document.getElementById('yk-cart-total').innerText = `Total: $${total.toFixed(2)} MXN`;
+let totalFinal = YK_REGION === 'int'
+  ? convertToUSD(totalBase)
+  : totalBase;
+
+document.getElementById('yk-cart-total').innerText =
+`Total: ${formatPrice(totalFinal)}`;
+
 
 }
 
