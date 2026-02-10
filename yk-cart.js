@@ -241,6 +241,15 @@ applyInternationalForm();
 
 goStep(1);
 
+// 🔽 AQUÍ EMPIEZA LO NUEVO (reset visual)
+  document.getElementById('sub-envio').style.display = 'none';
+  document.getElementById('sub-entrega').style.display = 'none';
+
+  document
+    .querySelectorAll('input[name="yk-shipping"]')
+    .forEach(r => r.checked = false);
+  // 🔼 AQUÍ TERMINA LO NUEVO
+
 }
 
 function closeCartModal() { document.getElementById('yk-modal-checkout').classList.remove('visible'); }
@@ -494,3 +503,13 @@ function goStep(step) {
     step === 2 ? 'block' : 'none';
 }
 
+function validateStep1() {
+  const selected = document.querySelector('input[name="yk-shipping"]:checked');
+
+  if (!selected) {
+    alert("Por favor elige cómo quieres recibir tu pedido 📦🤝");
+    return;
+  }
+
+  goStep(2);
+}
