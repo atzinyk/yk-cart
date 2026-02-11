@@ -1,62 +1,5 @@
 var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQctzkWsZ7yGdZjDDLcF2FmtbxVBqOOE-DH4iVlVka4mNAa8uX1MC-J/exec";
 
-// =========================
-// REGIÓN Y MONEDA
-// =========================
-
-let YK_REGION = localStorage.getItem('yk_region') || 'mx';
-
-const USD_RATE = 20;
-const PAYPAL_FEE = 1.045;
-
-function convertToUSD(mxn) {
-  return ((mxn / USD_RATE) * PAYPAL_FEE);
-}
-
-function formatPrice(value) {
-  return YK_REGION === 'mx'
-    ? `$${value.toFixed(2)} MXN`
-    : `$${value.toFixed(2)} USD`;
-}
-
-function setRegion(region) {
-  YK_REGION = region;
-  localStorage.setItem('yk_region', region);
-
-  document.getElementById('yk-btn-mx').style.opacity = region === 'mx' ? '1' : '0.6';
-  document.getElementById('yk-btn-int').style.opacity = region === 'int' ? '1' : '0.6';
-
-  document.getElementById('yk-region-warning').style.display =
-    region === 'int' ? 'block' : 'none';
-
-  // 🔽 LIMPIEZA AL CAMBIAR DE REGIÓN (PASO 5)
-  document
-    .querySelectorAll('input[name="yk-shipping"]')
-    .forEach(r => r.checked = false);
-
-  document.getElementById('sub-envio').style.display = 'none';
-  document.getElementById('sub-entrega').style.display = 'none';
-  // 🔼 FIN DE LIMPIEZA
-
-  renderCartList();
-
-  // 🌍 AJUSTES VISUALES POR REGIÓN
-  if (region === 'int') {
-    document.getElementById('tab-entrega').style.display = 'none';
-
-    const envInt = document.getElementById('env-int');
-    if (envInt) envInt.style.display = 'block';
-
-    document.getElementById('sub-envio').style.display = 'block';
-
-  } else {
-    document.getElementById('tab-entrega').style.display = 'flex';
-
-    const envInt = document.getElementById('env-int');
-    if (envInt) envInt.style.display = 'none';
-  }
-}
-
 
 var yk_cart = JSON.parse(localStorage.getItem('ykshopCart')) || {};
 
@@ -82,11 +25,7 @@ if(p) { sub += p.price * yk_cart[id]; count += yk_cart[id]; }
 
 const btn = document.getElementById('yk-cart-btn-flotante');
 
-let displayTotal = YK_REGION === 'int'
-  ? convertToUSD(sub)
-  : sub;
-
-if (btn) btn.innerText = `🛒 (${count}) ${formatPrice(displayTotal)}`;
+if(btn) btn.innerText = `🛒 (${count}) $${sub.toFixed(2)} MXN`;
 
 }
 
@@ -94,9 +33,7 @@ function renderCartList() {
 
 const list = document.getElementById('yk-cart-summary');
 
-list.innerHTML = "";
-let sub = 0;
-let subFinal = 0;
+list.innerHTML = ""; let sub = 0;
 
 Object.keys(yk_cart).forEach(id => {
 
@@ -104,13 +41,9 @@ let p = getProduct(id);
 
 if(p) {
 
-let baseTotal = p.price * yk_cart[id];
+let itemTotal = p.price * yk_cart[id];
 
-let itemTotal = YK_REGION === 'int'
-  ? convertToUSD(baseTotal)
-  : baseTotal;
-
-sub += baseTotal;
+sub += itemTotal;
 
 list.innerHTML += `
 <li style="
@@ -147,7 +80,7 @@ ${p.name}
 </div>
 
 <span style="min-width:80px; text-align:right;">
-${formatPrice(itemTotal)}
+$${itemTotal.toFixed(2)}
 </span>
 
 </li>`;
@@ -155,50 +88,33 @@ ${formatPrice(itemTotal)}
 }
 
 });
- 
-if (YK_REGION === 'int') {
-  subFinal = convertToUSD(sub);
-} else {
-  subFinal = sub;
-}
 
-document.getElementById('yk-cart-subtotal').innerText =
-  `Subtotal: ${formatPrice(subFinal)}`;
+document.getElementById('yk-cart-subtotal').innerText = `Subtotal: $${sub.toFixed(2)} MXN`;
+
+const esGratis = sub >= GOAL_SHIPPING;
 
 const goalText = document.getElementById('yk-goal-text');
+
 const goalBar = document.getElementById('yk-goal-bar');
-const goalContainer = document.querySelector('.yk-shipping-goal-container');
 
-if (YK_REGION === 'mx') {
+if (esGratis) {
 
-  // 👇 TODO este bloque solo vive en México
-  goalContainer.style.display = 'block';
+goalText.innerHTML = "✨ ¡Felicidades! Tienes <strong>Envío Gratis</strong> ✨";
 
-  if (sub >= GOAL_SHIPPING) {
-
-    goalText.innerHTML =
-      "✨ ¡Felicidades! Tienes <strong>Envío Gratis</strong> ✨";
-    goalBar.style.width = "100%";
-
-  } else {
-
-    let faltante = GOAL_SHIPPING - sub;
-    let porcentaje = (sub / GOAL_SHIPPING) * 100;
-
-    goalText.innerHTML =
-      `Agrega <strong>$${faltante.toFixed(2)}</strong> más y no pagues envío. 🚚`;
-    goalBar.style.width = `${porcentaje}%`;
-
-  }
+goalBar.style.width = "100%";
 
 } else {
 
-  // 🌍 Internacional: NO hay metas de envío
-  goalContainer.style.display = 'none';
+let faltante = GOAL_SHIPPING - sub;
+
+let porcentaje = (sub / GOAL_SHIPPING) * 100;
+
+goalText.innerHTML = `Agrega <strong>$${faltante.toFixed(2)}</strong> más y no pagues envío. 🚚`;
+
+goalBar.style.width = `${porcentaje}%`;
 
 }
-  
-const esGratis = YK_REGION === 'mx' && sub >= GOAL_SHIPPING;
+
 const envs = { p: 180, c: 80, m: 30, e: 0 };
 
 Object.keys(envs).forEach(k => {
@@ -223,15 +139,9 @@ el.innerHTML = `<strong>Costo: $${envs[k].toFixed(2)} MXN</strong>`;
 
 const envSel = document.querySelector('input[name="yk-shipping"]:checked');
 
-let totalBase = sub + (esGratis ? 0 : (envSel ? parseFloat(envSel.value) : 0));
+const total = sub + (esGratis ? 0 : (envSel ? parseFloat(envSel.value) : 0));
 
-let totalFinal = YK_REGION === 'int'
-  ? convertToUSD(totalBase)
-  : totalBase;
-
-document.getElementById('yk-cart-total').innerText =
-`Total: ${formatPrice(totalFinal)}`;
-
+document.getElementById('yk-cart-total').innerText = `Total: $${total.toFixed(2)} MXN`;
 
 }
 
@@ -283,19 +193,7 @@ document.getElementById('yk-modal-checkout').classList.add('visible');
 
 loadDraft();
 
-if (YK_REGION === 'mx') {
-  document.getElementById('sub-envio').style.display = 'none';
-  document.getElementById('sub-entrega').style.display = 'none';
-
-  document
-    .querySelectorAll('input[name="yk-shipping"]')
-    .forEach(r => r.checked = false);
-}
-
-  document
-    .querySelectorAll('input[name="yk-shipping"]')
-    .forEach(r => r.checked = false);
-  // 🔼 AQUÍ TERMINA LO NUEVO
+renderCartList();
 
 }
 
@@ -330,6 +228,7 @@ tabEntrega.style.background = 'rgba(255,255,255,0.05)';
 tabEntrega.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEntrega.style.color = '#fff';
 
+document.getElementById('env-p').checked = true;
 toggleCampos(true);
 
 } else {
@@ -342,6 +241,7 @@ tabEnvio.style.background = 'rgba(255,255,255,0.05)';
 tabEnvio.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEnvio.style.color = '#fff';
 
+document.getElementById('env-m').checked = true;
 toggleCampos(false);
 
 }
@@ -403,13 +303,6 @@ document.getElementById('yk-notas').value = d.nt || "";
 }
 
 function enviarPedido() {
-
-if (YK_REGION === 'int') {
-  const env = document.getElementById('env-i');
-  if (env) env.checked = true;
-  goStep(2);
-  return;
-}
 
 const n = document.getElementById('yk-nombre').value;
 
@@ -521,42 +414,3 @@ if(window.yk_products) { updateCartUI(); clearInterval(checkLoad); }
 }, 500);
 
 window.onload = updateCartUI;
-
-function applyInternationalForm() {
-  if (YK_REGION !== 'int') return;
-
-  document.getElementById('yk-address-section').innerHTML = `
-    <div class="yk-form-group">
-      <label>Nombre Completo</label>
-      <input placeholder="Tal cual aparece en su identificación oficial">
-    </div>
-
-    <div class="yk-form-group">
-      <label>País</label>
-      <input>
-    </div>
-
-    <div class="yk-form-group">
-      <label>Código Postal</label>
-      <input>
-    </div>
-  `;
-}
-function validateStep1() {
-
-  // INTERNACIONAL: no necesita método de envío
-  if (YK_REGION === 'int') {
-    goStep(2);
-    return;
-  }
-
-  // MÉXICO: sí debe elegir
-  const selected = document.querySelector('input[name="yk-shipping"]:checked');
-
-  if (!selected) {
-    alert("Por favor elige cómo quieres recibir tu pedido 📦🤝");
-    return;
-  }
-
-  goStep(2);
-}
