@@ -1,3 +1,4 @@
+ORIGINAL Carrito gtihub
 var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQctzkWsZ7yGdZjDDLcF2FmtbxVBqOOE-DH4iVlVka4mNAa8uX1MC-J/exec";
 
 
@@ -102,7 +103,6 @@ if (esGratis) {
 goalText.innerHTML = "✨ Envío gratis desbloqueado";
 
 goalBar.style.width = "100%";
-goalBar.style.boxShadow = "0 0 18px rgba(194,166,134,0.6)";
 
 } else {
 
@@ -113,7 +113,6 @@ let porcentaje = (sub / GOAL_SHIPPING) * 100;
 goalText.innerHTML = `✨ Estás a <strong>$${faltante.toFixed(2)}</strong> de desbloquear envío gratis`;
 
 goalBar.style.width = `${porcentaje}%`;
-goalBar.style.opacity = "1";
 
 }
 
@@ -249,9 +248,6 @@ document.getElementById('sub-entrega').style.display = modo === 'entrega' ? 'blo
 
 if (modo === 'envio') {
 
-tabEnvio.classList.add('active');
-tabEntrega.classList.remove('active');
-
 tabEnvio.style.background = 'rgba(194,166,134,0.15)';
 tabEnvio.style.borderColor = 'rgba(194,166,134,0.6)';
 tabEnvio.style.color = '#C2A686';
@@ -262,9 +258,6 @@ tabEntrega.style.color = '#fff';
 
 
 } else {
-
-tabEntrega.classList.add('active');
-tabEnvio.classList.remove('active');
 
 tabEntrega.style.background = 'rgba(194,166,134,0.15)';
 tabEntrega.style.borderColor = 'rgba(194,166,134,0.6)';
