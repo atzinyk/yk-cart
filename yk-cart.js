@@ -221,6 +221,10 @@ function selectModo(modo) {
 const form = document.getElementById('yk-order-form');
 form.style.display = 'none';
 form.style.opacity = '0';
+// resetear selección de envío
+document.querySelectorAll('input[name="yk-shipping"]').forEach(r => r.checked = false);
+document.getElementById('yk-order-form').style.display = 'none';
+document.getElementById('yk-order-form').style.opacity = '0';
 
 const tabEnvio = document.getElementById('tab-envio');
 const tabEntrega = document.getElementById('tab-entrega');
@@ -238,7 +242,6 @@ tabEntrega.style.background = 'rgba(255,255,255,0.05)';
 tabEntrega.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEntrega.style.color = '#fff';
 
-toggleCampos(true);
 
 } else {
 
@@ -250,7 +253,6 @@ tabEnvio.style.background = 'rgba(255,255,255,0.05)';
 tabEnvio.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEnvio.style.color = '#fff';
 
-toggleCampos(false);
 
 }
 
