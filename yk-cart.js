@@ -206,6 +206,12 @@ function toggleCampos(esEnvio) {
 document.getElementById('yk-address-section').style.display = esEnvio ? 'block' : 'none';
 
 document.getElementById('label-nombre').innerText = esEnvio ? "Nombre Completo *" : "Nombre o Nickname *";
+const form = document.getElementById('yk-order-form');
+form.style.display = 'block';
+
+setTimeout(() => {
+  form.style.opacity = '1';
+}, 50);
 
 renderCartList();
 
@@ -228,7 +234,6 @@ tabEntrega.style.background = 'rgba(255,255,255,0.05)';
 tabEntrega.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEntrega.style.color = '#fff';
 
-document.getElementById('env-p').checked = true;
 toggleCampos(true);
 
 } else {
@@ -241,7 +246,6 @@ tabEnvio.style.background = 'rgba(255,255,255,0.05)';
 tabEnvio.style.borderColor = 'rgba(255,255,255,0.25)';
 tabEnvio.style.color = '#fff';
 
-document.getElementById('env-m').checked = true;
 toggleCampos(false);
 
 }
