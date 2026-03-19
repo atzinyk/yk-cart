@@ -1,3 +1,5 @@
+EDITABLE Carrito gtihub
+
 var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQctzkWsZ7yGdZjDDLcF2FmtbxVBqOOE-DH4iVlVka4mNAa8uX1MC-J/exec";
 
 
@@ -218,13 +220,8 @@ renderCartList();
 }
 function selectModo(modo) {
 // ocultar formulario al cambiar de modo
-const form = document.getElementById('yk-order-form');
-form.style.display = 'none';
-form.style.opacity = '0';
 // resetear selección de envío
 document.querySelectorAll('input[name="yk-shipping"]').forEach(r => r.checked = false);
-document.getElementById('yk-order-form').style.display = 'none';
-document.getElementById('yk-order-form').style.opacity = '0';
 
 const tabEnvio = document.getElementById('tab-envio');
 const tabEntrega = document.getElementById('tab-entrega');
