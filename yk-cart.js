@@ -46,42 +46,42 @@ let itemTotal = p.price * yk_cart[id];
 sub += itemTotal;
 
 list.innerHTML += `
-<li style="
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:8px;
-border-bottom: 1px solid rgba(255,255,255,0.1);
-padding-bottom:5px;
-">
+<li class="yk-cart-item">
 
 <img
 src="${p.thumb || ''}"
 loading="lazy"
 style="
-width: 64px;
+width: 70px;
 height: auto;
 max-height: 80px;
 object-fit: contain;
-border-radius: 4px;
-background: transparent;
+border-radius: 8px;
 flex-shrink: 0;
 "
 >
 
-<span style="flex:1; text-align:left;">
-${p.name}
-</span>
+<div style="flex:1; text-align:left;">
 
-<div style="display:flex; align-items:center;">
-<button type="button" class="qty-btn" onclick="changeQty('${id}', -1)">-</button>
+<div style="font-size:0.95rem; margin-bottom:4px;">
+${p.name}
+</div>
+
+<div style="opacity:0.6; font-size:0.8rem;">
+$${p.price.toFixed(2)} MXN
+</div>
+
+</div>
+
+<div style="display:flex; align-items:center; gap:4px;">
+<button type="button" class="qty-btn" onclick="changeQty('${id}', -1)">−</button>
 <span style="font-weight:bold; min-width:20px; text-align:center;">${yk_cart[id]}</span>
 <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
 </div>
 
-<span style="min-width:80px; text-align:right;">
+<div style="min-width:70px; text-align:right; font-weight:bold;">
 $${itemTotal.toFixed(2)}
-</span>
+</div>
 
 </li>`;
 
@@ -99,7 +99,7 @@ const goalBar = document.getElementById('yk-goal-bar');
 
 if (esGratis) {
 
-goalText.innerHTML = "✨ ¡Felicidades! Tienes <strong>Envío Gratis</strong> ✨";
+goalText.innerHTML = "✨ Envío gratis desbloqueado";
 
 goalBar.style.width = "100%";
 
@@ -109,7 +109,7 @@ let faltante = GOAL_SHIPPING - sub;
 
 let porcentaje = (sub / GOAL_SHIPPING) * 100;
 
-goalText.innerHTML = `Agrega <strong>$${faltante.toFixed(2)}</strong> más y no pagues envío. 🚚`;
+goalText.innerHTML = `✨ Estás a <strong>$${faltante.toFixed(2)}</strong> de desbloquear envío gratis`;
 
 goalBar.style.width = `${porcentaje}%`;
 
