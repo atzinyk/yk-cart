@@ -1,5 +1,3 @@
-EDITABLE Carrito gtihub
-
 var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbzSYTfKTivJipQctzkWsZ7yGdZjDDLcF2FmtbxVBqOOE-DH4iVlVka4mNAa8uX1MC-J/exec";
 
 
@@ -205,12 +203,25 @@ function handleOutsideClick(e) { if (e.target.id === 'yk-modal-checkout') closeC
 
 function toggleCampos(esEnvio) {
 
-document.getElementById('yk-address-section').style.display = esEnvio ? 'block' : 'none';
-
-document.getElementById('label-nombre').innerText = esEnvio ? "Nombre Completo *" : "Nombre o Nickname *";
+const address = document.getElementById('yk-address-section');
 const form = document.getElementById('yk-order-form');
-form.style.display = 'block';
 
+// Mostrar/ocultar dirección
+if (esEnvio) {
+  address.style.display = 'block';
+} else {
+  address.style.display = 'none';
+}
+
+// Cambiar label de nombre
+document.getElementById('label-nombre').innerText =
+  esEnvio ? "Nombre Completo *" : "Nombre o Nickname *";
+
+// 🔥 FORZAR aparición del formulario (la clave del bug)
+form.style.display = 'block';
+form.style.opacity = '0';
+
+// pequeño reset para asegurar animación
 setTimeout(() => {
   form.style.opacity = '1';
 }, 50);
@@ -222,6 +233,11 @@ function selectModo(modo) {
 // ocultar formulario al cambiar de modo
 // resetear selección de envío
 document.querySelectorAll('input[name="yk-shipping"]').forEach(r => r.checked = false);
+
+// ocultar formulario al cambiar modo
+const form = document.getElementById('yk-order-form');
+form.style.display = 'none';
+form.style.opacity = '0';
 
 const tabEnvio = document.getElementById('tab-envio');
 const tabEntrega = document.getElementById('tab-entrega');
