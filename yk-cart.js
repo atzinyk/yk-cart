@@ -217,6 +217,10 @@ renderCartList();
 
 }
 function selectModo(modo) {
+// ocultar formulario al cambiar de modo
+const form = document.getElementById('yk-order-form');
+form.style.display = 'none';
+form.style.opacity = '0';
 
 const tabEnvio = document.getElementById('tab-envio');
 const tabEntrega = document.getElementById('tab-entrega');
