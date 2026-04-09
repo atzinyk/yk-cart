@@ -79,7 +79,7 @@ $${p.price.toFixed(2)} MXN
 <button type="button" class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
 </div>
 
-<div style="min-width:70px; text-align:right; font-weight:bold;">
+<div class="yk-item-price">
 $${itemTotal.toFixed(2)}
 </div>
 
