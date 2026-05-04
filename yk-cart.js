@@ -1,4 +1,4 @@
-var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbx1QPvjLaObIT2x01TQ3Qdjxp7CSan0hFL6Hpt84JvxUOFPxZsoGq2TqiOTicmILBs0/exec";
+var URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbyY7HbhwdgLUJXKhHLYBKY3QzXqqI7o--DaEBNAtGzeSA_Eu7rvlslt1B1PeMP4k8gz/exec";
 
 
 var yk_cart = JSON.parse(localStorage.getItem('ykshopCart')) || {};
